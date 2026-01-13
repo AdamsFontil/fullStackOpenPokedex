@@ -23,4 +23,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print current dir current_dir_content
-        run: ls
+        run: ls -l

@@ -1,9 +1,10 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
 const PokemonList = ({ pokemonList }) => {
   return (
     <div className="list-container">
+      Does prs work
       {pokemonList.map(({ id, name }) => (
         <Link
           key={id}
@@ -17,7 +18,7 @@ const PokemonList = ({ pokemonList }) => {
         </Link>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default PokemonList
+export default PokemonList;

@@ -16,21 +16,26 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm install
-      - run: npm run eslint
-      - name: test
+      - name: Lint code
+        run: npm run eslint
+      - name: Run unit tests
         run: npm run test
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      - name: e2e with playwright
+      - name: Run E2E tests
         run: npm run test:e2e
 
-deploy:
+  deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+    needs: simple_deployment_pipeline    # ensures deployment runs only if tests pass
+    concurrency: deploy-group             # optional: only one deploy at a time
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+        with:
+          version: latest
+      - name: Fly.io Deploy
+        run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

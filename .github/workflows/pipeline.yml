@@ -46,9 +46,9 @@ jobs:
 
   notification:
     name: notify discord with webhook
-    needs: [simple_deployment_pipeline]
+    needs: [deploy]
     runs-on: ubuntu-latest
-
+    if: always()
     steps:
       - name: Notify success
         if: ${{ success() }}
@@ -76,7 +76,7 @@ jobs:
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"
   tag_release:
-    needs: [simple_deployment_pipeline, deploy, notification]
+    needs: [notification]
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:

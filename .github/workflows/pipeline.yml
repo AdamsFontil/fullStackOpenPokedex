@@ -104,10 +104,10 @@ jobs:
   #         username: "actions-status-discord"
   #         avatar_url: ${{ secrets.AVATAR_URL }}
 
-notification:
-  name: Notify Discord with webhook
-  needs: [tag_release]
-  runs-on: ubuntu-latest
+  notification:
+    name: Notify Discord with webhook
+    needs: [tag_release]
+    runs-on: ubuntu-latest
 
     steps:
       - uses: sarisia/actions-status-discord@v1

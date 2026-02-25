@@ -65,15 +65,12 @@ jobs:
         if: ${{ success() }}
         uses: rjstone/discord-webhook-notify@v2.1.1
         with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          username: aDaOne123
-          avatarUrl: https://unsplash.com/illustrations/a-cartoon-of-a-man-giving-a-thumbs-up-dqHbENxCaVA
-          text: Below this normal-looking message is an embed!
-          severity: info
-          color: '#00ff00'
-          title: Site deployed successfully!
-          description: "Deployment succeeded."
-          footer: Deployment bot
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        username: AwesomeSauce GitHub Repo Build Process
+        avatarUrl: https://<some awesome domain/<some awesome>.png
+        text: >
+            This is a text only notification.
+            * But it can contain (Discord) Markdown.
 
       - name: Notify failure
         if: ${{ failure() }}

@@ -14,26 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install dependencies
         run: npm install
-
       - name: Lint code
         run: npm run eslint
-
       - name: Run unit tests
         run: npm run test
-
       # - name: Install Playwright browsers
       #   run: npx playwright install --with-deps
-
       # - name: Run E2E tests
-      #   run: npm run test:e2e
-
+        # run: npm run test:e2e
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
@@ -41,85 +34,55 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
-
-  # deploy:
-  #   name: Deploy app
-  #   runs-on: ubuntu-latest
-  #   needs: [simple_deployment_pipeline, tag_release #   if: ${{ github]
-  #   concurrency: deploy-group
-  #   if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: superfly/flyctl-actions/setup-flyctl@master
-  #       with:
-  #         version: latest
-  #     - name: Fly.io Deploy
-  #       run: flyctl deploy --remote-only
-  #       env:
-  #         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-  # notification:
-  #   name: Notify Discord with webhook
-  #   needs: [tag_release]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: sarisia/actions-status-discord@v1
-  #       if: always()
-  #       with:
-  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-  #         status: ${{ job.status }}
-  #         content: "Hey <@316911818725392384>"
-  #         title: "Deploy"
-  #         description: "Build and deploy to fly"
-  #         image: ${{ secrets.EMBED_IMAGE }}
-  #         color: 0x0000ff
-  #         url: "https://github.com/sarisia/actions-status-discord"
-  #         username: "actions-status-discord"
-  #         avatar_url: ${{ secrets.AVATAR_URL }}
-
-  # notification:
-  #   name: Notify Discord with webhook
-  #   needs: [tag_release]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: sarisia/actions-status-discord@v1
-  #       if: always()
-  #       with:
-  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}
-  #         status: ${{ job.status }}
-  #         content: "Hey <@316911818725392384>"
-  #         title: "Deploy"
-  #         description: "Build and deploy to fly"
-  #         image: ${{ secrets.EMBED_IMAGE }}
-  #         color: 0x0000ff
-  #         url: "https://github.com/sarisia/actions-status-discord"
-  #         username: "actions-status-discord"
-  #         avatar_url: ${{ secrets.AVATAR_URL }}
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    needs: [simple_deployment_pipeline, tag_release]
+    concurrency: deploy-group             # optional: only one deploy at a time
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: latest
+      - name: Fly.io Deploy
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
   notification:
-    name: Notify Discord with webhook
-    needs: [tag_release]
+    name: notify discord with webhook
+    needs: [deploy]
     runs-on: ubuntu-latest
 
     steps:
-      - uses: sarisia/actions-status-discord@v1
-        if: always()
+      - name: Notify success
+        if: ${{ success() }}
+        uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          content: "Hey <@316911818725392384>"
-          title: "Deploy"
-          description: "Build and deploy to fly"
-          image: ${{ secrets.EMBED_IMAGE }}
+          content: "Hey adaone123<@316911818725392384>"
+          title: "Deploy Succeeded!"
+          description: "Site deployed view it live at the url"
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
-          username: "actions-status-discord"
-          avatar_url: ${{ secrets.AVATAR_URL }}
+          username: "GitHub Actions"
+
+      - name: Notify failure
+        if: ${{ failure() }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          content: "Hey adaone123<@316911818725392384>"
+          title: "Deploy Failed!"
+          description: "Hurry and fix the issue"
+          color: 0x0000ff
+          url: "https://github.com/sarisia/actions-status-discord"
+          username: "GitHub Actions"

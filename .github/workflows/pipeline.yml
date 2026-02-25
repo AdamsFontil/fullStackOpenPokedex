@@ -66,15 +66,51 @@ jobs:
   #         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
   notification:
-    name: Notify Discord with webhook
+    name: Notify Discord with curl since actions keep failing due to invalid webhook
     needs: [tag_release]
     runs-on: ubuntu-latest
     if: always()
 
     steps:
-      - name: Send Discord notification
+      - name: Send full Discord embed
         run: |
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"content\": \"🚀 Deployment pipeline finished with status: ${{ needs.tag_release.result }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK }}
+          -d '{
+            "username": "GitHub Actions with curl",
+            "avatar_url": "'"${{ secrets.AVATAR_URL }}"'",
+            "content": "Hey <@316911818725392384>",
+            "embeds": [
+              {
+                "title": "Deploy",
+                "description": "Build and deploy to GitHub Pages",
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "color": 255,
+                "fields": [
+                  {
+                    "name": "Status",
+                    "value": "'"${{ job.status }}"'",
+                    "inline": true
+                  },
+                  {
+                    "name": "Branch",
+                    "value": "'"${{ github.ref_name }}"'",
+                    "inline": true
+                  },
+                  {
+                    "name": "Commit",
+                    "value": "[`${{ github.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
+                    "inline": false
+                  },
+                  {
+                    "name": "Triggered by",
+                    "value": "'"${{ github.actor }}"'",
+                    "inline": true
+                  }
+                ],
+                "image": {
+                  "url": "'"${{ secrets.EMBED_IMAGE }}"'"
+                }
+              }
+            ]
+          }' ${{ secrets.DISCORD_WEBHOOK }}

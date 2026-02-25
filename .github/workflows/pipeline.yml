@@ -58,7 +58,7 @@ jobs:
           status: ${{ job.status }}
           content: "Hey adaone123<@316911818725392384>"
           title: "Deploy Succeeded!"
-          description: "Site deployed view it live here https://fullstackopenpokedex.fly.dev/ tagging occurs last"
+          description: "Site deployed view here https://fullstackopenpokedex.fly.dev/"
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"
@@ -76,7 +76,7 @@ jobs:
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"
   tag_release:
-    needs: [simple_deployment_pipeline, notification]
+    needs: [simple_deployment_pipeline, deploy, notification]
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:

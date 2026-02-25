@@ -1,4 +1,5 @@
 name: Deployment pipeline
+
 on:
   push:
     branches:
@@ -6,6 +7,7 @@ on:
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize ]
+
 jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-latest
@@ -19,18 +21,13 @@ jobs:
       - name: Linting
         run: npm run eslint
 
-
-
-
   notify_success:
-    needs: [ simple_deployment_pipeline ]
+    needs: simple_deployment_pipeline
     runs-on: ubuntu-latest
-    #if: ${{ success() }}
-    if: ${{ false }}
+    if: ${{ success() }}
     steps:
       - name: Notify Success
         uses: sarisia/actions-status-discord@v1
-        if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
@@ -39,17 +36,15 @@ jobs:
           description: "Build and deploy to GitHub Pages"
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
-          username: GitHub Actions
+          username: "GitHub Actions"
 
   notify_failure:
-    needs: [ simple_deployment_pipeline ]
+    needs: simple_deployment_pipeline
     runs-on: ubuntu-latest
-    #if: ${{ failure() }}
-    if: ${{ false }}
+    if: ${{ failure() }}
     steps:
       - name: Notify Failure
         uses: sarisia/actions-status-discord@v1
-        if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
@@ -58,4 +53,4 @@ jobs:
           description: "The deployment encountered an error."
           color: 0xff0000
           url: "https://github.com/sarisia/actions-status-discord"
-          username: GitHub Actions
+          username: "GitHub Actions"

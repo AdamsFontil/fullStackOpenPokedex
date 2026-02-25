@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: Notify success
         if: ${{ success() }}
-        uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f
+        uses: rjstone/discord-webhook-notify@v2.1.1
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: aDaOne123

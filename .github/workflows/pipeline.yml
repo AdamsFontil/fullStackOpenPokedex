@@ -69,7 +69,7 @@ jobs:
           status: ${{ job.status }}
           content: "Hey adaone123<@316911818725392384>"
           title: "Deploy Succeeded!"
-          description: "Site deployed view it live at the url"
+          description: "Site deployed view it live here https://fullstackopenpokedex.fly.dev/"
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"

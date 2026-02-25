@@ -39,10 +39,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
-
-
-
-
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
@@ -59,3 +55,37 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           DEFAULT_BUMP: patch
+
+  notification:
+    name: notify discord with webhook
+    needs: [deploy]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify success
+        if: ${{ success() }}
+        uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: aDaOne123
+          avatarUrl: https://unsplash.com/illustrations/a-cartoon-of-a-man-giving-a-thumbs-up-dqHbENxCaVA
+          text: Below this normal-looking message is an embed!
+          severity: info
+          color: '#00ff00'
+          title: Site deployed successfully!
+          description: "Deployment succeeded."
+          footer: Deployment bot
+
+      - name: Notify failure
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: aDaOne123
+          avatarUrl: https://unsplash.com/illustrations/a-cartoon-of-a-man-giving-a-thumbs-up-dqHbENxCaVA
+          text: Below this normal-looking message is an embed!
+          severity: error
+          color: '#ff0000'
+          title: Deployment failed
+          description: "Something went wrong during deployment."
+          footer: Deployment bot

@@ -26,23 +26,12 @@ jobs:
       # - name: Install Playwright browsers
       #   run: npx playwright install --with-deps
       # - name: Run E2E tests
-        # run: npm run test:e2e
-  tag_release:
-    needs: [simple_deployment_pipeline]
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+      #   run: npm run test:e2e
+
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    needs: [simple_deployment_pipeline, tag_release]
+    needs: [simple_deployment_pipeline]
     concurrency: deploy-group             # optional: only one deploy at a time
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:
@@ -57,7 +46,7 @@ jobs:
 
   notification:
     name: notify discord with webhook
-    needs: [deploy]
+    needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
 
     steps:
@@ -69,7 +58,7 @@ jobs:
           status: ${{ job.status }}
           content: "Hey adaone123<@316911818725392384>"
           title: "Deploy Succeeded!"
-          description: "Site deployed view it live here https://fullstackopenpokedex.fly.dev/"
+          description: "Site deployed view here https://fullstackopenpokedex.fly.dev/"
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"
@@ -86,3 +75,15 @@ jobs:
           color: 0x0000ff
           url: "https://github.com/sarisia/actions-status-discord"
           username: "GitHub Actions"
+  tag_release:
+    needs: [simple_deployment_pipeline, deploy, notification]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch

@@ -55,33 +55,37 @@ jobs:
   #     #   env:
   #     #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-  notification:
-    name: notify discord with webhook
-    needs: [tag_release]
-    runs-on: ubuntu-latest
+notification:
+  name: notify discord with webhook
+  needs: [tag_release]
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Notify success
-        if: ${{ success() }}
-        uses: rjstone/discord-webhook-notify@v2.1.1
-        with:
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-        username: AwesomeSauce GitHub Repo Build Process
-        avatarUrl: https://<some awesome domain/<some awesome>.png
-        text: >
-            This is a text only notification.
-            * But it can contain (Discord) Markdown.
+  steps:
+    - uses: sarisia/actions-status-discord@v1
+      if: always()
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: ${{ job.status }}
+        content: "Hey <@316911818725392384>"
+        title: "Deploy"
+        description: "Build and deploy to GitHub Pages"
+        image: ${{ secrets.EMBED_IMAGE }}
+        color: 0x0000ff
+        url: "https://github.com/sarisia/actions-status-discord"
+        username: GitHub Actions
+        avatar_url: ${{ secrets.AVATAR_URL }}
 
-      - name: Notify failure
-        if: ${{ failure() }}
-        uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f
-        with:
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-          username: aDaOne123
-          avatarUrl: https://unsplash.com/illustrations/a-cartoon-of-a-man-giving-a-thumbs-up-dqHbENxCaVA
-          text: Below this normal-looking message is an embed!
-          severity: error
-          color: '#ff0000'
-          title: Deployment failed
-          description: "Something went wrong during deployment."
-          footer: Deployment bot
+
+      # - name: Notify failure
+      #   if: ${{ failure() }}
+      #   uses: rjstone/discord-webhook-notify@c2597273488aeda841dd1e891321952b51f7996f
+      #   with:
+      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      #     username: aDaOne123
+      #     avatarUrl: https://unsplash.com/illustrations/a-cartoon-of-a-man-giving-a-thumbs-up-dqHbENxCaVA
+      #     text: Below this normal-looking message is an embed!
+      #     severity: error
+      #     color: '#ff0000'
+      #     title: Deployment failed
+      #     description: "Something went wrong during deployment."
+      #     footer: Deployment bot

@@ -58,7 +58,7 @@ jobs:
 
   notification:
     name: notify discord with webhook
-    needs: [deploy]
+    # needs: [deploy]
     runs-on: ubuntu-latest
 
     steps:

@@ -42,7 +42,7 @@ jobs:
           username: GitHub Actions
 
   notify_failure:
-    needs: [ simple_deployment_pipeline, tag_release ]
+    needs: [ simple_deployment_pipeline ]
     runs-on: ubuntu-latest
     #if: ${{ failure() }}
     if: ${{ false }}

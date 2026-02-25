@@ -84,16 +84,42 @@ jobs:
   #         username: "actions-status-discord"
   #         avatar_url: ${{ secrets.AVATAR_URL }}
 
-  notification:
-    name: Notify Discord with webhook
-    needs: [tag_release]
-    runs-on: ubuntu-latest
+  # notification:
+  #   name: Notify Discord with webhook
+  #   needs: [tag_release]
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: sarisia/actions-status-discord@v1
+  #       if: always()
+  #       with:
+  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  #         status: ${{ job.status }}
+  #         content: "Hey <@316911818725392384>"
+  #         title: "Deploy"
+  #         description: "Build and deploy to fly"
+  #         image: ${{ secrets.EMBED_IMAGE }}
+  #         color: 0x0000ff
+  #         url: "https://github.com/sarisia/actions-status-discord"
+  #         username: "actions-status-discord"
+  #         avatar_url: ${{ secrets.AVATAR_URL }}
+
+notification:
+  name: Notify Discord with webhook
+  needs: [tag_release]
+  runs-on: ubuntu-latest
 
     steps:
-      - name: Send Discord notification
+      - uses: sarisia/actions-status-discord@v1
         if: always()
-        run: |
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d "{\"content\": \"Deployment pipeline finished with status: ${{ job.status }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          content: "Hey <@316911818725392384>"
+          title: "Deploy"
+          description: "Build and deploy to fly"
+          image: ${{ secrets.EMBED_IMAGE }}
+          color: 0x0000ff
+          url: "https://github.com/sarisia/actions-status-discord"
+          username: "actions-status-discord"
+          avatar_url: ${{ secrets.AVATAR_URL }}

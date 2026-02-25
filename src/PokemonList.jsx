@@ -1,10 +1,9 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
 const PokemonList = ({ pokemonList }) => {
   return (
     <div className="list-container">
-      <h2>Testing PRs</h2>
       {pokemonList.map(({ id, name }) => (
         <Link
           key={id}
@@ -18,7 +17,7 @@ const PokemonList = ({ pokemonList }) => {
         </Link>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default PokemonList
+export default PokemonList;

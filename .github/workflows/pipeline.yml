@@ -68,7 +68,7 @@ notification:
         status: ${{ job.status }}
         content: "Hey <@316911818725392384>"
         title: "Deploy"
-        description: "Build and deploy to GitHub Pages"
+        description: "Build and deploy to fly"
         image: ${{ secrets.EMBED_IMAGE }}
         color: 0x0000ff
         url: "https://github.com/sarisia/actions-status-discord"

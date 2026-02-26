@@ -2,7 +2,7 @@ name: Ping live site
 
 on:
   schedule:
-    - cron: "15 18 * * *"
+    - cron: "45 19 * * *"
 
 jobs:
   ping_site:

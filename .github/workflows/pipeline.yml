@@ -22,10 +22,10 @@ jobs:
         run: npm run eslint
       - name: Run unit tests
         run: npm run test
-      # - name: Install Playwright browsers
-      #   run: npx playwright install --with-deps
-      # - name: Run E2E tests
-      #   run: npm run test:e2e
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run E2E tests
+        run: npm run test:e2e
       - name: Setup Flyctl
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
         uses: superfly/flyctl-actions/setup-flyctl@master
@@ -53,7 +53,7 @@ jobs:
             webhook: ${{ secrets.DISCORD_WEBHOOK }}
             status: ${{ job.status }}
             content: "Hey adaone123<@316911818725392384>"
-            title: "Deploy Failed!"
+            title: "Something in pipeline failed site did not deploy!"
             description: "Go and fix the issue"
             color: 0x0000ff
             url: "https://github.com/sarisia/actions-status-discord"

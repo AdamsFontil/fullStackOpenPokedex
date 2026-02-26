@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const PokemonList = ({ pokemonList }) => {
   return (
     <div className="list-container">
-      <h2>Create Linting error </h2>
+      <h2>Fixed Linting error </h2>
       {pokemonList.map(({ id, name }) => (
         <Link
           key={id}
